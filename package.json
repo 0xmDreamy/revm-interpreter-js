@@ -1,0 +1,53 @@
+{
+  "name": "revm-interpreter-js",
+  "version": "0.0.2",
+  "private": false,
+  "description": "Basic REVM Interpreter WASM binding for JavaScript",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xmDreamy/revm-interpreter-js.git"
+  },
+  "license": "MIT",
+  "contributors": [
+    "0xmDreamy <0xmDreamy@proton.me>"
+  ],
+  "types": "./dist/pkg.nodejs/revm_interpreter_js.d.ts",
+  "exports": {
+    ".": {
+      "browser": {
+        "types": "./dist/pkg.bundler/revm_interpreter_js.d.ts",
+        "default": "./dist/pkg.bundler/revm_interpreter_js.js"
+      },
+      "import": {
+        "types": "./dist/pkg.web/revm_interpreter_js.d.ts",
+        "default": "./dist/pkg.web/revm_interpreter_js.js"
+      },
+      "default": {
+        "types": "./dist/pkg.nodejs/revm_interpreter_js.d.ts",
+        "default": "./dist/pkg.nodejs/revm_interpreter_js.js"
+      }
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist/pkg.bundler",
+    "dist/pkg.nodejs",
+    "dist/pkg.web"
+  ],
+  "scripts": {
+    "build": ":",
+    "build:wasm:bundler": "wasm-pack build --target bundler --out-dir ./dist/pkg.bundler --no-pack . && rm ./dist/pkg.bundler/.gitignore",
+    "build:wasm:nodejs": "wasm-pack build --target nodejs --out-dir ./dist/pkg.nodejs --no-pack . && rm ./dist/pkg.nodejs/.gitignore",
+    "build:wasm:web": "wasm-pack build --target web --out-dir ./dist/pkg.web --no-pack . && rm ./dist/pkg.web/.gitignore"
+  },
+  "devDependencies": {
+    "@nx/js": "19.6.0",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "nx": "19.6.0",
+    "wasm-pack": "^0.13.0"
+  },
+  "nx": {},
+  "dependencies": {}
+}

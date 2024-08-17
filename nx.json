@@ -1,0 +1,59 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "build:wasm:bundler",
+        "build:wasm:nodejs",
+        "build:wasm:web"
+      ]
+    },
+    "build:wasm:nodejs": {
+      "inputs": [
+        "default"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/pkg.nodejs"
+      ],
+      "cache": true
+    },
+    "build:wasm:bundler": {
+      "inputs": [
+        "default"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/pkg.bundler"
+      ],
+      "cache": true
+    },
+    "build:wasm:web": {
+      "inputs": [
+        "default"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/pkg.web"
+      ],
+      "cache": true
+    }
+  },
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "!{projectRoot}/**/*.md",
+      "!{projectRoot}/LICENSE"
+    ],
+    "production": [
+      "!{projectRoot}/jest.config.ts",
+      "!{projectRoot}/**/?(*.)+(spec|test).ts"
+    ]
+  },
+  "release": {
+    "projects": [
+      "*"
+    ],
+    "version": {
+      "preVersionCommand": "bun nx run-many -t build"
+    }
+  },
+  "defaultBase": "main"
+}
