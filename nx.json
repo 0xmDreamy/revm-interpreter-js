@@ -40,11 +40,8 @@
     "default": [
       "{projectRoot}/**/*",
       "!{projectRoot}/**/*.md",
-      "!{projectRoot}/LICENSE"
-    ],
-    "production": [
-      "!{projectRoot}/jest.config.ts",
-      "!{projectRoot}/**/?(*.)+(spec|test).ts"
+      "!{projectRoot}/LICENSE",
+      "!{projectRoot}/renovate.json"
     ]
   },
   "release": {
