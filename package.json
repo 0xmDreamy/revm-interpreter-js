@@ -49,5 +49,8 @@
     "wasm-pack": "^0.13.0"
   },
   "nx": {},
-  "dependencies": {}
+  "dependencies": {},
+  "trustedDependencies": [
+    "wasm-pack"
+  ]
 }
