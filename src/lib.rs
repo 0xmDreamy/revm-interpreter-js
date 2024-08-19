@@ -1,4 +1,9 @@
-use std::{str::FromStr, u64};
+#![no_std]
+
+extern crate alloc;
+
+use alloc::{string::String, vec::Vec};
+use core::str::FromStr;
 
 use revm_interpreter::{
     opcode::make_instruction_table,
