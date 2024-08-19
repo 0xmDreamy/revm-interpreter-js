@@ -30,23 +30,36 @@ impl From<js_sys::BigInt> for BigInt {
     }
 }
 
-#[wasm_bindgen]
+/// Interpret the given bytecode.
+///
+/// @param {Uint8Array} bytecode - The bytecode to interpret.
+/// @param {Uint8Array} [data] - The data to pass to the contract.
+/// @param {bigint} [value] - The value to send to the contract.
+/// @param {Uint8Array} [from] - The address of the sender. Default is zero address.
+/// @param {Uint8Array} [targetAddress] - The address of the contract. Default is zero address.
+/// @param {Uint8Array} [bytecodeAddress] - The address of the bytecode. Default is target address.
+/// @param {bigint} [gasLimit] - The gas limit for interpreter. 0 <= gas_limit <= type(uint64).max. Default type(uint64).max.
+/// @param {boolean} [staticCall=false] - Whether the call is static. Default is false.
+/// @param {string} [specificationName] - The name of the spec to use. Default is LATEST. See: https://github.com/bluealloy/revm/blob/main/crates/primitives/src/specification.rs#L97.
+/// @returns {Uint8Array} The result of the interpretation.
+#[allow(non_snake_case)]
+#[wasm_bindgen(skip_jsdoc)]
 pub fn interpret(
     bytecode: &[u8],
     data: Option<Vec<u8>>,
     value: Option<js_sys::BigInt>,
     from: Option<Vec<u8>>,
-    target_address: Option<Vec<u8>>,
-    bytecode_address: Option<Vec<u8>>,
-    gas_limit: Option<u64>,
-    static_call: Option<bool>,
-    spec_name: Option<String>,
+    targetAddress: Option<Vec<u8>>,
+    bytecodeAddress: Option<Vec<u8>>,
+    gasLimit: Option<u64>,
+    staticCall: Option<bool>,
+    specificationName: Option<String>,
 ) -> Result<Vec<u8>, js_sys::Error> {
     let contract = Contract::new(
         data.map_or_else(|| Bytes::default(), |v| Bytes::from_iter(v)),
         Bytecode::new_raw(Bytes::from_iter(bytecode)),
         None,
-        target_address.map_or_else(
+        targetAddress.map_or_else(
             || Ok(Address::ZERO),
             |v| {
                 v.as_slice()
@@ -54,7 +67,7 @@ pub fn interpret(
                     .map_err(|_| js_sys::Error::new("Bad target address"))
             },
         )?,
-        match bytecode_address {
+        match bytecodeAddress {
             Some(v) => Some(
                 v.as_slice()
                     .try_into()
@@ -75,12 +88,12 @@ pub fn interpret(
 
     let mut interpreter = Interpreter::new(
         contract,
-        gas_limit.unwrap_or_else(|| u64::MAX),
-        static_call.unwrap_or(false),
+        gasLimit.unwrap_or_else(|| u64::MAX),
+        staticCall.unwrap_or(false),
     );
 
     let mut host = DummyHost::default();
-    let spec_id = spec_name.map_or_else(|| SpecId::LATEST, |v| SpecId::from(v.as_str()));
+    let spec_id = specificationName.map_or_else(|| SpecId::LATEST, |v| SpecId::from(v.as_str()));
     let table = spec_to_generic!(spec_id, &make_instruction_table::<DummyHost, SPEC>());
 
     if let InterpreterAction::Return { result } =
