@@ -55,5 +55,6 @@
       "preVersionCommand": "bun nx run-many -t build"
     }
   },
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "nxCloudAccessToken": "ZmZhZDA0MTktZTU2OS00OTQxLTgzMjgtM2QzNTEyYzZkM2Q4fHJlYWQ="
 }

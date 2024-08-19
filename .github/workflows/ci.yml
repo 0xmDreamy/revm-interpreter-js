@@ -20,4 +20,6 @@ jobs:
       - run: rustup target add wasm32-unknown-unknown
       - run: bun install --frozen-lockfile
       - uses: nrwl/nx-set-shas@v4
-      - run: bun nx affected -t build
+      - env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: bun nx affected -t build
