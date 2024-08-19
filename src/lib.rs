@@ -1,8 +1,8 @@
-use std::str::FromStr;
+use std::{str::FromStr, u64};
 
 use revm_interpreter::{
-    opcode::{make_instruction_table, InstructionTable},
-    primitives::{Bytecode, Bytes, ShanghaiSpec, U256},
+    opcode::make_instruction_table,
+    primitives::{spec_to_generic, Address, Bytecode, Bytes, SpecId, U256},
     Contract, DummyHost, Interpreter, InterpreterAction, SharedMemory,
 };
 use wasm_bindgen::prelude::*;
@@ -32,30 +32,56 @@ impl From<js_sys::BigInt> for BigInt {
 
 #[wasm_bindgen]
 pub fn interpret(
-    from: &[u8],
-    data: &[u8],
-    value: js_sys::BigInt,
-    target_address: &[u8],
     bytecode: &[u8],
-    gas_limit: u64,
+    data: Option<Vec<u8>>,
+    value: Option<js_sys::BigInt>,
+    from: Option<Vec<u8>>,
+    target_address: Option<Vec<u8>>,
+    bytecode_address: Option<Vec<u8>>,
+    gas_limit: Option<u64>,
     static_call: Option<bool>,
+    spec_name: Option<String>,
 ) -> Result<Vec<u8>, js_sys::Error> {
     let contract = Contract::new(
-        Bytes::from_iter(data),
+        data.map_or_else(|| Bytes::default(), |v| Bytes::from_iter(v)),
         Bytecode::new_raw(Bytes::from_iter(bytecode)),
         None,
-        target_address
-            .try_into()
-            .map_err(|_| js_sys::Error::new("Bad target address"))?,
-        None,
-        from.try_into()
-            .map_err(|_| js_sys::Error::new("Bad from address"))?,
-        BigInt::from(value).try_into()?,
+        target_address.map_or_else(
+            || Ok(Address::ZERO),
+            |v| {
+                v.as_slice()
+                    .try_into()
+                    .map_err(|_| js_sys::Error::new("Bad target address"))
+            },
+        )?,
+        match bytecode_address {
+            Some(v) => Some(
+                v.as_slice()
+                    .try_into()
+                    .map_err(|_| js_sys::Error::new("Bad bytecode address"))?,
+            ),
+            None => None,
+        },
+        from.map_or_else(
+            || Ok(Address::ZERO),
+            |v| {
+                v.as_slice()
+                    .try_into()
+                    .map_err(|_| js_sys::Error::new("Bad from address"))
+            },
+        )?,
+        value.map_or_else(|| Ok(U256::ZERO), |v| BigInt::from(v).try_into())?,
     );
-    let mut interpreter = Interpreter::new(contract, gas_limit, static_call.unwrap_or(false));
+
+    let mut interpreter = Interpreter::new(
+        contract,
+        gas_limit.unwrap_or_else(|| u64::MAX),
+        static_call.unwrap_or(false),
+    );
 
     let mut host = DummyHost::default();
-    let table: &InstructionTable<DummyHost> = &make_instruction_table::<DummyHost, ShanghaiSpec>();
+    let spec_id = spec_name.map_or_else(|| SpecId::LATEST, |v| SpecId::from(v.as_str()));
+    let table = spec_to_generic!(spec_id, &make_instruction_table::<DummyHost, SPEC>());
 
     if let InterpreterAction::Return { result } =
         interpreter.run(SharedMemory::new(), table, &mut host)
