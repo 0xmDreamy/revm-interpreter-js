@@ -1,3 +1,18 @@
+## 0.1.2 (2024-08-19)
+
+
+### 🚀 Features
+
+- Make bindings no_std ([#11](https://github.com/0xmDreamy/revm-interpreter-js/pull/11))
+
+### 🩹 Fixes
+
+- Remove unused dependency anyhow ([#10](https://github.com/0xmDreamy/revm-interpreter-js/pull/10))
+
+### ❤️  Thank You
+
+- 0xmDreamy @0xmDreamy
+
 ## 0.1.1 (2024-08-19)
 
 This was a version bump only, there were no code changes.
