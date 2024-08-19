@@ -41,7 +41,7 @@
     "build:wasm:web": "wasm-pack build --target web --out-dir ./dist/pkg.web --no-pack . && rm ./dist/pkg.web/.gitignore"
   },
   "devDependencies": {
-    "@nx/js": "19.6.0",
+    "@nx/js": "19.6.1",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
