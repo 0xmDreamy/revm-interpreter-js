@@ -1,3 +1,14 @@
+## 1.0.3 (2024-08-24)
+
+
+### 🩹 Fixes
+
+- Correct bad optional in InterpretParameters struct ([#16](https://github.com/0xmDreamy/revm-interpreter-js/pull/16))
+
+### ❤️  Thank You
+
+- 0xmDreamy @0xmDreamy
+
 ## 1.0.1 (2024-08-24)
 
 

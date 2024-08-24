@@ -1,6 +1,6 @@
 {
   "name": "revm-interpreter-js",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "private": false,
   "description": "Basic REVM Interpreter WASM binding for JavaScript",
   "repository": {
