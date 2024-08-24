@@ -11,5 +11,14 @@ crate-type = ["cdylib"]
 
 [dependencies]
 js-sys = "0.3.70"
-revm-interpreter = { version = "9.0.0", default-features = false }
-wasm-bindgen = "0.2.93"
+revm-interpreter = { version = "9.0", default-features = false }
+tsify-next = { version = "0.5", default-features = false, features = ["js"] }
+serde = { version = "1.0", default-features = false, features = [
+    "derive",
+    "alloc",
+] }
+serde_bytes = { version = "0.11", default-features = false, features = [
+    "alloc",
+] }
+serde-wasm-bindgen = "0.6"
+wasm-bindgen = "0.2"
