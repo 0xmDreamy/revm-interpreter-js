@@ -81,6 +81,7 @@ pub struct InterpretParams {
     #[serde(default)]
     /// The gas limit for interpreter. 0 <= gas_limit <= type(uint64).max. Default type(uint64).max.
     gas_limit: Option<u64>,
+    #[tsify(type = "boolean")]
     #[serde(default)]
     /// Whether the call is static. Default is false.
     static_call: Option<bool>,
