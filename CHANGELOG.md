@@ -1,3 +1,17 @@
+## 1.0.4 (2024-08-24)
+
+
+### 🩹 Fixes
+
+- Make staticCall partial only ([#18](https://github.com/0xmDreamy/revm-interpreter-js/pull/18))
+- Only implement Deserialize for InterpretParams ([#19](https://github.com/0xmDreamy/revm-interpreter-js/pull/19))
+- Handle undefined value directly in interpret ([#20](https://github.com/0xmDreamy/revm-interpreter-js/pull/20))
+- Use u64::max_value as default for gas_limit instead of Option::None ([#21](https://github.com/0xmDreamy/revm-interpreter-js/pull/21))
+
+### ❤️  Thank You
+
+- 0xmDreamy @0xmDreamy
+
 ## 1.0.3 (2024-08-24)
 
 
