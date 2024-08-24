@@ -39,12 +39,8 @@ impl TryFrom<JsValue> for BigInt {
             Ok(BigInt {
                 value: value.unchecked_into(),
             })
-        } else if value.is_undefined() {
-            Ok(BigInt {
-                value: js_sys::BigInt::default(),
-            })
         } else {
-            Err(js_sys::Error::new("Value is not a BigInt or undefined"))
+            Err(js_sys::Error::new("Value is not a BigInt"))
         }
     }
 }
@@ -107,7 +103,11 @@ pub fn interpret(params: InterpretParams) -> Result<Vec<u8>, js_sys::Error> {
         params.target_address.unwrap_or_default().into(),
         params.bytecode_address.map(|v| v.into()),
         params.from.unwrap_or_default().into(),
-        BigInt::try_from(params.value)?.try_into()?,
+        if params.value.is_undefined() {
+            U256::ZERO
+        } else {
+            BigInt::try_from(params.value)?.try_into()?
+        },
     );
 
     let mut interpreter = Interpreter::new(
