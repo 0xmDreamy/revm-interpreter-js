@@ -1,3 +1,18 @@
+## 1.0.1 (2024-08-24)
+
+
+### 🚀 Features
+
+- ⚠️  Use a typed struct as the interpret parameter ([#14](https://github.com/0xmDreamy/revm-interpreter-js/pull/14))
+
+#### ⚠️  Breaking Changes
+
+- ⚠️  Use a typed struct as the interpret parameter ([#14](https://github.com/0xmDreamy/revm-interpreter-js/pull/14))
+
+### ❤️  Thank You
+
+- 0xmDreamy @0xmDreamy
+
 ## 0.1.2 (2024-08-19)
 
 
