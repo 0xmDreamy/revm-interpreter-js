@@ -4,7 +4,7 @@ extern crate alloc;
 
 use alloc::{boxed::Box, string::String, string::ToString, vec::Vec};
 use core::str::FromStr;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use tsify_next::Tsify;
 
 use revm_interpreter::{
@@ -49,7 +49,7 @@ impl TryFrom<JsValue> for BigInt {
     }
 }
 
-#[derive(Tsify, Serialize, Deserialize)]
+#[derive(Tsify, Deserialize)]
 #[tsify(from_wasm_abi, large_number_types_as_bigints)]
 #[serde(rename_all = "camelCase")]
 pub struct InterpretParams {
