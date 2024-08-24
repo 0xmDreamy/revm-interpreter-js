@@ -74,9 +74,9 @@ pub struct InterpretParams {
     /// The address of the bytecode. Default is target address.
     bytecode_address: Option<[u8; 20]>,
     #[tsify(type = "bigint")]
-    #[serde(default)]
+    #[serde(default = "u64::max_value")]
     /// The gas limit for interpreter. 0 <= gas_limit <= type(uint64).max. Default type(uint64).max.
-    gas_limit: Option<u64>,
+    gas_limit: u64,
     #[tsify(type = "boolean")]
     #[serde(default)]
     /// Whether the call is static. Default is false.
@@ -112,7 +112,7 @@ pub fn interpret(params: InterpretParams) -> Result<Vec<u8>, js_sys::Error> {
 
     let mut interpreter = Interpreter::new(
         contract,
-        params.gas_limit.unwrap_or_else(|| u64::MAX),
+        params.gas_limit,
         params.static_call.unwrap_or_default(),
     );
 
