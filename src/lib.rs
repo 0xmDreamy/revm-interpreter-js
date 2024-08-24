@@ -2,7 +2,7 @@
 
 extern crate alloc;
 
-use alloc::{boxed::Box, format, string::String, string::ToString, vec::Vec};
+use alloc::{boxed::Box, string::String, string::ToString, vec::Vec};
 use core::str::FromStr;
 use serde::{Deserialize, Serialize};
 use tsify_next::Tsify;
@@ -31,14 +31,26 @@ pub struct BigInt {
     pub value: js_sys::BigInt,
 }
 
-impl From<js_sys::BigInt> for BigInt {
-    fn from(value: js_sys::BigInt) -> Self {
-        BigInt { value }
+impl TryFrom<JsValue> for BigInt {
+    type Error = js_sys::Error;
+
+    fn try_from(value: JsValue) -> Result<Self, Self::Error> {
+        if value.is_bigint() {
+            Ok(BigInt {
+                value: value.unchecked_into(),
+            })
+        } else if value.is_undefined() {
+            Ok(BigInt {
+                value: js_sys::BigInt::default(),
+            })
+        } else {
+            Err(js_sys::Error::new("Value is not a BigInt or undefined"))
+        }
     }
 }
 
 #[derive(Tsify, Serialize, Deserialize)]
-#[tsify(into_wasm_abi, from_wasm_abi, large_number_types_as_bigints)]
+#[tsify(from_wasm_abi, large_number_types_as_bigints)]
 #[serde(rename_all = "camelCase")]
 pub struct InterpretParams {
     #[tsify(type = "Uint8Array")]
@@ -52,15 +64,15 @@ pub struct InterpretParams {
     #[tsify(type = "bigint")]
     #[serde(default, with = "serde_wasm_bindgen::preserve")]
     /// The value to send to the contract.
-    value: js_sys::BigInt,
+    value: JsValue,
     #[tsify(type = "Uint8Array")]
     #[serde(default, with = "serde_bytes")]
     /// The address of the sender. Default is zero address.
-    from: [u8; 20],
+    from: Option<[u8; 20]>,
     #[tsify(type = "Uint8Array")]
     #[serde(default, with = "serde_bytes")]
     /// The address of the contract. Default is zero address.
-    target_address: [u8; 20],
+    target_address: Option<[u8; 20]>,
     #[tsify(type = "Uint8Array")]
     #[serde(default, with = "serde_bytes")]
     /// The address of the bytecode. Default is target address.
@@ -71,7 +83,7 @@ pub struct InterpretParams {
     gas_limit: Option<u64>,
     #[serde(default)]
     /// Whether the call is static. Default is false.
-    static_call: bool,
+    static_call: Option<bool>,
     #[tsify(
         type = "'Frontier' | 'Homestead' | 'Tangerine' | 'Spurious' | 'Byzantium' | 'Constantinople' | 'Petersburg' | 'Istanbul' | 'MuirGlacier' | 'Berlin' | 'London' | 'Merge' | 'Shanghai' | 'Cancun' | 'Prague' | 'PragueEOF'"
     )]
@@ -91,16 +103,16 @@ pub fn interpret(params: InterpretParams) -> Result<Vec<u8>, js_sys::Error> {
         params.data.into(),
         Bytecode::new_raw(params.bytecode.into()),
         None,
-        params.target_address.into(),
+        params.target_address.unwrap_or_default().into(),
         params.bytecode_address.map(|v| v.into()),
-        params.from.into(),
-        BigInt::from(params.value).try_into()?,
+        params.from.unwrap_or_default().into(),
+        BigInt::try_from(params.value)?.try_into()?,
     );
 
     let mut interpreter = Interpreter::new(
         contract,
         params.gas_limit.unwrap_or_else(|| u64::MAX),
-        params.static_call,
+        params.static_call.unwrap_or_default(),
     );
 
     let mut host = DummyHost::default();
