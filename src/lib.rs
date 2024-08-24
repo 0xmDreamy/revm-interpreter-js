@@ -73,11 +73,11 @@ pub struct InterpretParams {
     #[serde(default, with = "serde_bytes")]
     /// The address of the bytecode. Default is target address.
     bytecode_address: Option<[u8; 20]>,
-    #[tsify(type = "bigint")]
+    #[tsify()]
     #[serde(default = "u64::max_value")]
     /// The gas limit for interpreter. 0 <= gas_limit <= type(uint64).max. Default type(uint64).max.
     gas_limit: u64,
-    #[tsify(type = "boolean")]
+    #[tsify(optional)]
     #[serde(default)]
     /// Whether the call is static. Default is false.
     static_call: Option<bool>,
@@ -93,7 +93,6 @@ pub struct InterpretParams {
 ///
 /// @param {InterpretParams} params - The parameters interpreter parameters.
 /// @returns {Uint8Array} The result of the interpretation.
-#[allow(non_snake_case)]
 #[wasm_bindgen(skip_jsdoc)]
 pub fn interpret(params: InterpretParams) -> Result<Vec<u8>, js_sys::Error> {
     let contract = Contract::new(
