@@ -46,7 +46,7 @@
     "@swc/core": "~1.7.0",
     "@swc/helpers": "~0.5.11",
     "nx": "19.6.5",
-    "wasm-pack": "^0.13.0"
+    "wasm-pack": "^0.15.0"
   },
   "nx": {},
   "dependencies": {},
